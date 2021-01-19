@@ -42,19 +42,20 @@ app.get('/api/timestamp/:date?', (req, res) => {
     res.status(200).json(result);
   }
   else {
-    if (date.split('-').length === 1) date = +date
-    if (new Date(date) !== 'Invalid Date') {
-      result.unix = new Date(date).getTime();
-      result.utc = new Date(date).toUTCString();
-      if (!result.unix || result.utc === 'Invalid Date')
-        res.status(500).json({ error: "Invalid Date" })
-      else res.status(200).json(result);
+    if (/\d{5,}/.test(date)) {
+      const dateInt = parseInt(date);
+      //Date regards numbers as unix timestamps, strings are processed differently
+      res.json({ unix: dateInt, utc: new Date(dateInt).toUTCString() });
+    } else {
+      let dateObject = new Date(date);
+
+      if (dateObject.toString() === "Invalid Date") {
+        res.json({ error: "Invalid Date" });
+      } else {
+        res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
+      }
     }
-    else {
-      res.status(500).json({ error: "Invalid Date" })
-    }
-  }
-})
+  })
 
 // listen for requests :)
 var listener = app.listen(3000, function () {
