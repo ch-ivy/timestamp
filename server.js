@@ -55,7 +55,8 @@ app.get('/api/timestamp/:date?', (req, res) => {
         res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
       }
     }
-  })
+  }
+})
 
 // listen for requests :)
 var listener = app.listen(3000, function () {
